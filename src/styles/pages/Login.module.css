@@ -1,0 +1,55 @@
+.formBox{
+  width: 448px;
+  /* height: 408px; */
+  padding: 40px 32px;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #212121 !important;
+  box-sizing: border-box !important;
+}
+
+.formBox label{
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 18px;
+  margin-right: auto;
+}
+
+.formContainer{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.formBox input{
+  border: 1px solid #424242;
+  height: 40px;
+  margin-bottom: 32px;
+}
+
+.formBox form{
+  width: 100%;
+}
+
+.formBox fieldset{
+  border: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+}
+
+.formBox button{
+  background-color: #212121;
+  color: #fff;
+  border: 0;
+  height: 40px;
+  width: 100%;
+  cursor: pointer;
+
+  font-weight: 600;
+}

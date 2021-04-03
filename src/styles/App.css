@@ -1,4 +1,10 @@
-body{
+
+body, body > *{
+  font-family: 'Montserrat', sans-serif  !important;
+  height: 100vh;
+}
+
+button{
   font-family: 'Montserrat', sans-serif  !important;
 }
 
