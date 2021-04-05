@@ -1,0 +1,59 @@
+.addNaverContainer h1{
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 36px;
+}
+
+.addNaverContainer label{
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 18px;
+}
+
+.addNaverContainer fieldset{
+    border: 0;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 32px;
+    padding: 0;
+}
+
+.addNaverContainer fieldset input{
+    height: 40px;
+    font-size: 16px;
+}
+
+.addNaverSaveButton{
+    border: 0;
+    background-color: #212121;
+    color: #fff;
+    height: 40px;
+    width: 176px;
+    font-weight: 600;
+    float: right;
+}
+
+.addNaverButtonIcon{
+    color: #212121 !important;
+}
+
+.addNaverModalConent{
+    width: 592px;
+    padding: 0 32px 32px 32px !important;
+}
+
+.addNaverModalTitle{
+    padding: 32px 32px 0 32px!important;
+}
+
+.addNaverModalTitle h1{
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 36px;
+}
+
+.addNaverModalTitle button{
+    color: #212121;
+    margin-top: -60px;
+    margin-left: auto !important;
+}

@@ -1,38 +1,29 @@
 
 import { AppBar, Button, Toolbar } from '@material-ui/core';
-import { AxiosResponse } from 'axios';
-import React, { useEffect, useState } from 'react';
-import Naver from '../../components/Naver';
+import React, { useState } from 'react';
 import { useAuth } from '../../contexts/authentication';
-import api from '../../services/api'
+import NaversList from '../../components/NavesrList'
 
 import styles from '../../styles/pages/Home.module.css'
+import AddNaver from '../../components/AddNaver';
 
 const Home: React.FC = () => {
-  const { signed, Logout } = useAuth();
-  const token = localStorage.getItem('@App:token')
+  const { Logout } = useAuth();
 
-  const [navers, setNavers] = useState(Array);
+  const [addNaver, setAddNaver] = useState(false);
 
   async function handleLogout() {
     Logout();
   }
 
-  const config = {
-    headers: { Authorization: `Bearer ${token}` }
-  };
-  
-  async function GetNavers() {
-    await api.get('/navers/', {
-      headers: config,
-    }).then( res => setNavers(res.data));
+  function showNaversList(){
+    setAddNaver(true);
   }
-  
-  useEffect(() => {
-    GetNavers()
-  }, [])
- 
- 
+
+  function hideNaversList(){
+    setAddNaver(false);
+  }
+
   return (
     
     <div>
@@ -42,17 +33,9 @@ const Home: React.FC = () => {
           <Button onClick={handleLogout} className={styles.navbarButton}>Sair</Button>
         </Toolbar>
       </AppBar>
-      <div className={styles.homeContainer}>
-        <div className={styles.homeTitleContainer}>
-          <h1>Navers</h1>
-          <button>Adicioar Naver</button>
-        </div>
-        <div>
-          {navers.map((item: any) => (
-              <Naver naver={item} key={item.id}></Naver>
-          ))} 
-        </div>
-      </div>
+
+      {addNaver ? <AddNaver hideAdd={hideNaversList}/> : <NaversList showAdd={showNaversList}/> }  
+       
       
      </div>
   );
