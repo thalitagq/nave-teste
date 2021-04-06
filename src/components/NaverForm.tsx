@@ -1,31 +1,51 @@
 import { Grid } from "@material-ui/core"
-import React from "react"
-
-import styles from '../styles/components/AddNaver.module.css'
+import React, { useEffect, useState } from "react"
+import { idText } from "typescript"
+import { transformToDate } from "../services/functions"
+import { Props } from "./Naver"
 
 interface NaverFormProps{
   handleOpen(): any;
   handleClose(): any;
+  naver?: Props | null;
+  inputChange(arg0: Props): any;
 }
 
 const NaverForm: React.FC<NaverFormProps> = (props) => {
+  
+  const [naver, setNaver] = useState<Props>(props.naver as Props);
+
+  const handleInputChange = (event: { target: { id: any; value: any } }) => {
+    setNaver((prevState) => ({
+       ...prevState,
+       [event.target.id]: event.target.value
+    }));
+  }
+
+  useEffect(() => {
+    props.inputChange(naver)
+  }, [handleInputChange])
+
   return(
     <>
       <Grid item xs={12} sm={6}>
         <div >
           <fieldset>
             <label htmlFor="name">Nome</label>
-            <input type="text" placeholder="Nome" id="name"/>
+            <input type="text" placeholder="Nome" id="name" value={naver?.name} onChange={handleInputChange}/>
           </fieldset>
     
           <fieldset>
-            <label htmlFor="birthdate">Idade</label>
-            <input type="text" placeholder="Idade" id="birthdate"/>
+            <label htmlFor="birthdate">Data de nascimento</label>
+            {naver?.birthdate
+              ? <input type="date" placeholder="Idade" id="birthdate" value={transformToDate(naver?.birthdate)} onChange={handleInputChange}/>
+              : <input type="date" placeholder="Idade" id="birthdate" value={naver?.birthdate} onChange={handleInputChange}/>
+            }
           </fieldset>
     
           <fieldset>
             <label htmlFor="project">Projetos que participou</label>
-            <input type="text" placeholder="Projetos que participou" id="project"/>
+            <input type="text" placeholder="Projetos que participou" id="project" value={naver?.project} onChange={handleInputChange}/>
           </fieldset>
         </div>
       </Grid>
@@ -33,20 +53,21 @@ const NaverForm: React.FC<NaverFormProps> = (props) => {
         <div >
           <fieldset>
             <label htmlFor="job_role">Cargo</label>
-            <input type="text" placeholder="Cargo" id="job_role"/>
+            <input type="text" placeholder="Cargo" id="job_role" value={naver?.job_role} onChange={handleInputChange}/>
           </fieldset>
     
           <fieldset>
-            <label htmlFor="admission_date">Tempo de empresa</label>
-            <input type="text" placeholder="Tempo de empresa" id="admission_date"/>
+            <label htmlFor="admission_date">Data de admissão</label>
+            {naver?.admission_date
+              ? <input type="date" placeholder="Idade" id="admission_date" value={transformToDate(naver?.admission_date)} onChange={handleInputChange}/>
+              : <input type="date" placeholder="Idade" id="admission_date" value={naver?.admission_date} onChange={handleInputChange}/>
+            }
           </fieldset>
     
           <fieldset>
             <label htmlFor="url">URL da foto do Naver</label>
-            <input type="text" placeholder="URL da foto do Naver" id="url"/>
+            <input type="text" placeholder="URL da foto do Naver" id="url" value={naver?.url} onChange={handleInputChange}/>
           </fieldset>
-    
-          <button className={styles.addNaverSaveButton} onClick={props.handleOpen}>Salvar</button>
         </div>  
       </Grid>
     </>  

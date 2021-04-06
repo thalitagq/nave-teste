@@ -23,4 +23,13 @@
     cursor: pointer;
     font-weight: 600;
 }
+
+.naversListTitleContainer a{
+    text-decoration: none;
+    color: inherit;
+}
+
+.naversListCards{
+    display: flex;
+}
   

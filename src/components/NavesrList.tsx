@@ -1,29 +1,19 @@
 import React, { useEffect, useState } from "react";
 import Naver from "./Naver";
+import api from "../services/api";
+import { Link } from "react-router-dom";
 
 import styles from "../styles/components/NaversList.module.css"
-import { useAuth } from "../contexts/authentication";
-import api from "../services/api";
 
-interface NaversListProps{
-  showAdd(): any;
-}
+const NaversList: React.FC = () =>{
 
-const NaversList: React.FC <NaversListProps> = (props) =>{
-
-  const { signed, Logout } = useAuth();
   const token = localStorage.getItem('@App:token')
+  const config = {
+    headers: { Authorization: `Bearer ${token}` }
+  }
 
   const [navers, setNavers] = useState(Array);
 
-  async function handleLogout() {
-    Logout();
-  }
-
-  const config = {
-    headers: { Authorization: `Bearer ${token}` }
-  };
-  
   async function GetNavers() {
     await api.get('/navers/', {
       headers: config,
@@ -32,23 +22,22 @@ const NaversList: React.FC <NaversListProps> = (props) =>{
   
   useEffect(() => {
     GetNavers()
-  }, [])
+    console.log(navers)
+  }, [navers.length])
 
   return(
-  <div className={styles.naversListContainer}>
-    <div className={styles.naversListTitleContainer}>
-      <h1>Navers</h1>
-      <button type="button" onClick={props.showAdd}>Adicioar Naver</button>
-    </div>
-    <div>
-      {navers.map((item: any) => (
+    <div className={styles.naversListContainer}>
+      <div className={styles.naversListTitleContainer}>
+        <h1>Navers</h1>
+        <button type="button" ><Link to='/create'>Adicioar Naver</Link></button>
+      </div>
+      <div className={styles.naversListCards}>
+        {navers.map((item: any) => (
           <Naver naver={item} key={item.id}></Naver>
-      ))} 
+        ))} 
+      </div>
     </div>
-  </div>
   );
-
-
 }
 
 export default NaversList;

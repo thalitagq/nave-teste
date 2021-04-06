@@ -1,8 +1,11 @@
-import { Button, Card, CardActionArea, CardActions, CardContent, CardMedia, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Icon, IconButton, Modal } from '@material-ui/core'
+import {  Card, CardActionArea, CardActions, CardContent, CardMedia, Dialog, DialogActions, DialogContent, Icon, IconButton } from '@material-ui/core'
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom';
+import api from '../services/api';
+import { calculate_age } from '../services/functions';
 import styles from '../styles/components/Naver.module.css'
 
-interface Props {
+export interface Props {
   id: string;
   name: string;
   admission_date: string;
@@ -22,6 +25,11 @@ const Naver: React.FC<NaverProps> = (props) => {
   const [openShowNaver, setOpenShowNaver] = useState(false);
   const [openDeleteNaver, setOpenDeleteNaver] = useState(false);
 
+  const token = localStorage.getItem('@App:token')
+  const config = {
+    headers: { Authorization: `Bearer ${token}` , 'Content-Type': 'application/json'}
+  }
+  
   const handleOpen = (modal: string) => {
     if(modal === 'show'){
       setOpenShowNaver(true)
@@ -41,12 +49,16 @@ const Naver: React.FC<NaverProps> = (props) => {
     
   };
 
-  function calculate_age(date: string) { 
-    var dateForm = new Date(date)
-    var diff_ms = Date.now() - dateForm.getTime();
-    var age_dt = new Date(diff_ms); 
-  
-    return Math.abs(age_dt.getUTCFullYear() - 1970);
+  async function DeleteNaver(id: string) {
+    var response
+    try {
+      response = await api.delete(`/navers/${id}`, {headers: config});
+      console.log('post response ' + response)
+
+    } catch (e) {
+      console.log(e)
+      console.error(e.message);
+    }
   }
 
   return(
@@ -63,11 +75,13 @@ const Naver: React.FC<NaverProps> = (props) => {
           <span>{props.naver.job_role}</span>
         </CardContent>
         <CardActions disableSpacing>
-          <IconButton aria-label="deletar" onClick={() => handleOpen('delete')}>
+          <IconButton aria-label="deletar" onClick={() => DeleteNaver(props.naver.id)}>
             <Icon>delete</Icon>
           </IconButton>
           <IconButton aria-label="editar">
-            <Icon>create</Icon>
+            <Link to={{pathname: "/update", state: props.naver}}>
+              <Icon>create</Icon>
+            </Link>
           </IconButton>
         </CardActions>
       </Card>
@@ -101,7 +115,7 @@ const Naver: React.FC<NaverProps> = (props) => {
               <span>{props.naver.project}</span>
             </DialogContent>
             <CardActions disableSpacing className={styles.modalNaverIcons}>
-              <IconButton aria-label="deletar" onClick={() => handleOpen('delete')}> 
+              <IconButton aria-label="deletar" onClick={() => DeleteNaver(props.naver.id)}> 
                 <Icon>delete</Icon>
               </IconButton>
               <IconButton aria-label="editar">
