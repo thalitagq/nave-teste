@@ -18,6 +18,7 @@ export interface Props {
 
 interface NaverProps {
   naver: Props;
+  listChanged(): void;
 }
 
 const Naver: React.FC<NaverProps> = (props) => {
@@ -52,9 +53,9 @@ const Naver: React.FC<NaverProps> = (props) => {
   async function DeleteNaver(id: string) {
     var response
     try {
-      response = await api.delete(`/navers/${id}`, {headers: config});
-      console.log('post response ' + response)
-
+      response = await api.delete(`/navers/${id}`, {headers: config})
+      props.listChanged()
+      
     } catch (e) {
       console.log(e)
       console.error(e.message);
@@ -75,11 +76,11 @@ const Naver: React.FC<NaverProps> = (props) => {
           <span>{props.naver.job_role}</span>
         </CardContent>
         <CardActions disableSpacing>
-          <IconButton aria-label="deletar" onClick={() => DeleteNaver(props.naver.id)}>
+          <IconButton aria-label="deletar" onClick={() =>  handleOpen('delete')}>
             <Icon>delete</Icon>
           </IconButton>
           <IconButton aria-label="editar">
-            <Link to={{pathname: "/update", state: props.naver}}>
+            <Link to={{pathname: "/update", state: props.naver}} style={{marginBottom:'-5px'}}>
               <Icon>create</Icon>
             </Link>
           </IconButton>
@@ -92,15 +93,23 @@ const Naver: React.FC<NaverProps> = (props) => {
         onClose={() => handleClose('show')}
         maxWidth='md'
       >
+        <CardActions className={styles.modalNaverIcons}>
+          <IconButton aria-label="fechar modal" style={{marginLeft: 'auto'}} onClick={() => handleClose('show')}>
+            <Icon>close</Icon>
+          </IconButton>
+        </CardActions>
         <div className={styles.modalNaver}>
-          <img src={props.naver.url} alt={props.naver.name}/>
+          <Card className={styles.modalNaverImg} elevation={0}>
+            <CardMedia
+              component="img"
+              alt={props.naver.name}
+              height="auto"
+              image={props.naver.url}
+              title={props.naver.name}
+            />
+          </Card>
 
-          <div>
-            <CardActions className={styles.modalNaverIcons}>
-              <IconButton aria-label="fechar modal" style={{marginLeft: 'auto'}} onClick={() => handleClose('show')}>
-                <Icon>close</Icon>
-              </IconButton>
-            </CardActions>
+          <div className={styles.modalNaverForm}>
             <DialogContent>
               <h1>{props.naver.name}</h1>
               <span>{props.naver.job_role}</span>
@@ -119,7 +128,9 @@ const Naver: React.FC<NaverProps> = (props) => {
                 <Icon>delete</Icon>
               </IconButton>
               <IconButton aria-label="editar">
+                <Link to={{pathname: "/update", state: props.naver}} style={{marginBottom:'-5px'}}>
                 <Icon>create</Icon>
+                </Link>
               </IconButton>
             </CardActions>
           </div>  
@@ -136,10 +147,9 @@ const Naver: React.FC<NaverProps> = (props) => {
           <span>Tem certeza que deseja excluir este Naver?</span>
         </DialogContent>
         <DialogActions className={styles.modalButtons}>
-          <button >Cancelar</button>
-          <button>Excluir</button>
+          <button onClick={()=>handleClose('delete')}>Cancelar</button>
+          <button onClick={()=>DeleteNaver(props.naver.id)}>Excluir</button>
         </DialogActions>
-
       </Dialog>
     </div>  
   )

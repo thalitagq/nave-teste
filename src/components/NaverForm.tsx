@@ -1,14 +1,12 @@
 import { Grid } from "@material-ui/core"
 import React, { useEffect, useState } from "react"
-import { idText } from "typescript"
 import { transformToDate } from "../services/functions"
 import { Props } from "./Naver"
 
 interface NaverFormProps{
-  handleOpen(): any;
-  handleClose(): any;
   naver?: Props | null;
   inputChange(arg0: Props): any;
+  formType: 'update' | 'create'
 }
 
 const NaverForm: React.FC<NaverFormProps> = (props) => {
@@ -37,7 +35,7 @@ const NaverForm: React.FC<NaverFormProps> = (props) => {
     
           <fieldset>
             <label htmlFor="birthdate">Data de nascimento</label>
-            {naver?.birthdate
+            {props.formType === 'update'
               ? <input type="date" placeholder="Idade" id="birthdate" value={transformToDate(naver?.birthdate)} onChange={handleInputChange}/>
               : <input type="date" placeholder="Idade" id="birthdate" value={naver?.birthdate} onChange={handleInputChange}/>
             }
@@ -58,7 +56,7 @@ const NaverForm: React.FC<NaverFormProps> = (props) => {
     
           <fieldset>
             <label htmlFor="admission_date">Data de admissão</label>
-            {naver?.admission_date
+            {props.formType === 'update'
               ? <input type="date" placeholder="Idade" id="admission_date" value={transformToDate(naver?.admission_date)} onChange={handleInputChange}/>
               : <input type="date" placeholder="Idade" id="admission_date" value={naver?.admission_date} onChange={handleInputChange}/>
             }

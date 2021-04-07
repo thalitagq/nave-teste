@@ -1,5 +1,5 @@
 import { CardActions, Container, Dialog, DialogContent, Grid, Icon, IconButton } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import api from '../services/api';
 import NaverForm from './NaverForm';
@@ -18,6 +18,7 @@ const AddNaver: React.FC = () => {
   const history = useHistory()
   let naver = {} as Props
   const [addNaver, setAddNaver] = useState<Props>(naver);
+  const [msg, setMsg] = useState(' ')
 
   // modal confirmação
   const handleOpen = () => {
@@ -31,24 +32,30 @@ const AddNaver: React.FC = () => {
   async function AddNaver() {
     var response
     if (addNaver['birthdate']) {
-      addNaver['birthdate'] = new Date(addNaver['birthdate']).toLocaleDateString()    
+      addNaver['birthdate'] = new Date(addNaver['birthdate']).toLocaleDateString('pt-br', {timeZone: 'UTC'})    
     }
     if(addNaver['admission_date']){
-      addNaver['admission_date'] = new Date(addNaver['admission_date']).toLocaleDateString()
+      addNaver['admission_date'] = new Date(addNaver['admission_date']).toLocaleDateString('pt-br', {timeZone: 'UTC'})
     }
     console.log(typeof addNaver['birthdate'])
     try {
       response = await api.post('/navers', addNaver, {headers: config});
-      console.log('post response ' + response)
+      setMsg('Naver criado com sucesso!')
 
     } catch (e) {
       console.log(e)
       console.error(e.message);
+      setMsg('Ocorreu um erro. Cheque os dados e tente novamente.')
     }
   }
 
   function handleChangeForm(newValue: React.SetStateAction<Props> | Props) {
     setAddNaver(newValue);
+  }
+
+  function handleCreate(){
+    AddNaver()
+    setTimeout(function(){  handleOpen() }, 1000);
   }
 
   return(
@@ -63,13 +70,12 @@ const AddNaver: React.FC = () => {
           </div>
         </Grid>
         <NaverForm 
-          handleOpen={handleOpen} 
-          handleClose={handleClose} 
           naver={addNaver} 
           inputChange={handleChangeForm}
+          formType='create'
         />
         <Grid item xs={12} direction="row-reverse">
-          <button className={styles.addNaverSaveButton} onClick={AddNaver}>Salvar</button>
+          <button className={styles.addNaverSaveButton} onClick={handleCreate}>Salvar</button>
         </Grid>
       </Grid>
 
@@ -86,7 +92,7 @@ const AddNaver: React.FC = () => {
         </CardActions>
         <DialogContent className={styles.addNaverModalConent}>
           
-          <span>Naver criado com sucesso!</span>
+          <span>{msg}</span>
         </DialogContent>
       </Dialog>
     </Container>

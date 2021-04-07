@@ -13,6 +13,11 @@ const NaversList: React.FC = () =>{
   }
 
   const [navers, setNavers] = useState(Array);
+  const [naversListChanged, setNaversListChanged] = useState(false)
+
+  function changed() {
+    setNaversListChanged(!naversListChanged)
+  }
 
   async function GetNavers() {
     await api.get('/navers/', {
@@ -21,9 +26,8 @@ const NaversList: React.FC = () =>{
   }
   
   useEffect(() => {
-    GetNavers()
-    console.log(navers)
-  }, [navers.length])
+    GetNavers()    
+  }, [naversListChanged])
 
   return(
     <div className={styles.naversListContainer}>
@@ -33,7 +37,7 @@ const NaversList: React.FC = () =>{
       </div>
       <div className={styles.naversListCards}>
         {navers.map((item: any) => (
-          <Naver naver={item} key={item.id}></Naver>
+          <Naver naver={item} key={item.id} listChanged={changed}></Naver>
         ))} 
       </div>
     </div>

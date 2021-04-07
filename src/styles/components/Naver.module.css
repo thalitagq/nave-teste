@@ -18,16 +18,17 @@
 
 .modalNaver{
   display: flex ;
-  height: 500px;
+  height: 430px;
   font-family: 'Montserrat', sans-serif !important;
 }
 
-.modalNaver img{
+.modalNaverImg{
   width: 500px;
   height: auto;
+  
 }
 
-.modalNaver img+div{
+.modalNaverForm{
   width: 500px;
   height: auto;
   display: grid;
@@ -95,4 +96,12 @@
   background-color: #212121;
   color: #fff;
   border: 0;
+}
+
+@media(max-width: 769px){
+  .modalNaver{
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+  }
 }

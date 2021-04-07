@@ -31,5 +31,12 @@
 
 .naversListCards{
     display: flex;
+    flex-wrap: wrap;
 }
-  
+
+@media(max-width: 769px){
+    .naversListCards{
+        align-items: center;
+        justify-content: center;
+    }
+  }
