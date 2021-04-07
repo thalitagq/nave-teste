@@ -1,8 +1,11 @@
-import { Button, Card, CardActionArea, CardActions, CardContent, CardMedia, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Icon, IconButton, Modal } from '@material-ui/core'
+import {  Card, CardActionArea, CardActions, CardContent, CardMedia, Dialog, DialogActions, DialogContent, Icon, IconButton } from '@material-ui/core'
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom';
+import api from '../services/api';
+import { calculate_age } from '../services/functions';
 import styles from '../styles/components/Naver.module.css'
 
-interface Props {
+export interface Props {
   id: string;
   name: string;
   admission_date: string;
@@ -15,32 +18,54 @@ interface Props {
 
 interface NaverProps {
   naver: Props;
+  listChanged(): void;
 }
 
 const Naver: React.FC<NaverProps> = (props) => {
 
-  const [open, setOpen] = useState(false);
+  const [openShowNaver, setOpenShowNaver] = useState(false);
+  const [openDeleteNaver, setOpenDeleteNaver] = useState(false);
 
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  function calculate_age(date: string) { 
-    var dateForm = new Date(date)
-    var diff_ms = Date.now() - dateForm.getTime();
-    var age_dt = new Date(diff_ms); 
+  const token = localStorage.getItem('@App:token')
+  const config = {
+    headers: { Authorization: `Bearer ${token}` , 'Content-Type': 'application/json'}
+  }
   
-    return Math.abs(age_dt.getUTCFullYear() - 1970);
+  const handleOpen = (modal: string) => {
+    if(modal === 'show'){
+      setOpenShowNaver(true)
+    }
+    else if(modal === 'delete'){
+      setOpenDeleteNaver(true)
+    }
+  };
+
+  const handleClose = (modal: string) => {
+    if(modal === 'show'){
+      setOpenShowNaver(false)
+    }
+    else if(modal === 'delete'){
+      setOpenDeleteNaver(false)
+    }
+    
+  };
+
+  async function DeleteNaver(id: string) {
+    var response
+    try {
+      response = await api.delete(`/navers/${id}`, {headers: config})
+      props.listChanged()
+      
+    } catch (e) {
+      console.log(e)
+      console.error(e.message);
+    }
   }
 
   return(
     <div>
       <Card className={styles.card} elevation={0}>
-        <CardActionArea onClick={handleOpen}>
+        <CardActionArea onClick={() => handleOpen('show')}>
           <CardMedia
             image={props.naver.url}
             style={{height: '280px'}}
@@ -51,52 +76,80 @@ const Naver: React.FC<NaverProps> = (props) => {
           <span>{props.naver.job_role}</span>
         </CardContent>
         <CardActions disableSpacing>
-          <IconButton aria-label="editar">
-            <Icon>create</Icon>
-          </IconButton>
-          <IconButton aria-label="deletar">
+          <IconButton aria-label="deletar" onClick={() =>  handleOpen('delete')}>
             <Icon>delete</Icon>
+          </IconButton>
+          <IconButton aria-label="editar">
+            <Link to={{pathname: "/update", state: props.naver}} style={{marginBottom:'-5px'}}>
+              <Icon>create</Icon>
+            </Link>
           </IconButton>
         </CardActions>
       </Card>
 
+      {/* modal show naver */}
       <Dialog
-        open={open}
-        onClose={handleClose}
+        open={openShowNaver}
+        onClose={() => handleClose('show')}
         maxWidth='md'
       >
-      <div className={styles.modalNaver}>
-        <img src={props.naver.url} alt={props.naver.name}/>
-
-        <div>
-          <CardActions className={styles.modalNaverIcons}>
-          <IconButton aria-label="fechar modal" style={{marginLeft: 'auto'}} onClick={handleClose}>
+        <CardActions className={styles.modalNaverIcons}>
+          <IconButton aria-label="fechar modal" style={{marginLeft: 'auto'}} onClick={() => handleClose('show')}>
             <Icon>close</Icon>
           </IconButton>
-          </CardActions>
-          <DialogContent>
-            <h1>{props.naver.name}</h1>
-            <span>{props.naver.job_role}</span>
+        </CardActions>
+        <div className={styles.modalNaver}>
+          <Card className={styles.modalNaverImg} elevation={0}>
+            <CardMedia
+              component="img"
+              alt={props.naver.name}
+              height="auto"
+              image={props.naver.url}
+              title={props.naver.name}
+            />
+          </Card>
 
-            <h2>Idade</h2>
-            <span>{calculate_age(props.naver.birthdate) + ' anos'}</span>
+          <div className={styles.modalNaverForm}>
+            <DialogContent>
+              <h1>{props.naver.name}</h1>
+              <span>{props.naver.job_role}</span>
 
-            <h2>Tempo de empresa</h2>
-            <span>{calculate_age(props.naver.admission_date) > 1 ? calculate_age(props.naver.admission_date) + ' anos' : ' 1 ano'}</span>
+              <h2>Idade</h2>
+              <span>{calculate_age(props.naver.birthdate) + ' anos'}</span>
 
-            <h2>Projetos que participou</h2>
-            <span>{props.naver.project}</span>
-          </DialogContent>
-          <CardActions disableSpacing className={styles.modalNaverIcons}>
-            <IconButton aria-label="deletar">
-              <Icon>delete</Icon>
-            </IconButton>
-            <IconButton aria-label="editar">
-              <Icon>create</Icon>
-            </IconButton>
-          </CardActions>
-        </div>  
-      </div>
+              <h2>Tempo de empresa</h2>
+              <span>{calculate_age(props.naver.admission_date) > 1 ? calculate_age(props.naver.admission_date) + ' anos' : ' 1 ano'}</span>
+
+              <h2>Projetos que participou</h2>
+              <span>{props.naver.project}</span>
+            </DialogContent>
+            <CardActions disableSpacing className={styles.modalNaverIcons}>
+              <IconButton aria-label="deletar" onClick={() => DeleteNaver(props.naver.id)}> 
+                <Icon>delete</Icon>
+              </IconButton>
+              <IconButton aria-label="editar">
+                <Link to={{pathname: "/update", state: props.naver}} style={{marginBottom:'-5px'}}>
+                <Icon>create</Icon>
+                </Link>
+              </IconButton>
+            </CardActions>
+          </div>  
+        </div>
+      </Dialog>
+
+      <Dialog
+        open={openDeleteNaver}
+        onClose={() => handleClose('delete')}
+        maxWidth='md'
+      >
+        <DialogContent className={styles.modalDelete}>
+          <h1>Excluir Naver</h1>
+          <span>Tem certeza que deseja excluir este Naver?</span>
+        </DialogContent>
+        <DialogActions className={styles.modalButtons}>
+          <button onClick={()=>handleClose('delete')}>Cancelar</button>
+          <button onClick={()=>DeleteNaver(props.naver.id)}>Excluir</button>
+        </DialogActions>
       </Dialog>
     </div>  
   )
